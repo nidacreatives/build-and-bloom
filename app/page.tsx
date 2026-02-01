@@ -1,46 +1,37 @@
-import Hero from '../components/Hero';
-import ProductCard from '../components/ProductCard';
+import { supabase } from '@/lib/supabase';
 
-export default function Home() {
+export default async function Page() {
+  // This line asks Supabase for your "Build & Bloom Kit"
+  const { data: products, error } = await supabase.from('products').select('*');
+
+  if (error) console.log('Error fetching:', error);
+
   return (
-    <main className="pb-20">
-      <Hero />
+    <main>
+      {/* ... Hero Section ... */}
 
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex justify-between items-end mb-10">
-          <div>
-            <h2 className="text-3xl font-bold text-slate-900">
-              The Digital Vault
-            </h2>
-            <p className="text-slate-500">
-              Hand-crafted assets to accelerate your workflow.
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {products?.map((product) => (
+          <div
+            key={product.id}
+            className="bg-white p-6 rounded-2xl shadow-sm border"
+          >
+            <div className="h-48 bg-gray-100 rounded-xl mb-4 flex items-center justify-center">
+              <span className="text-gray-400 font-bold">
+                {product.category}
+              </span>
+            </div>
+            <p className="text-blue-600 text-sm font-bold uppercase">
+              {product.category}
             </p>
+            <h3 className="text-xl font-bold mt-2">{product.title}</h3>
+            <p className="text-2xl font-bold mt-4">{product.price}</p>
+            <button className="w-full mt-6 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+              Get Access
+            </button>
           </div>
-          <button className="text-brand-primary font-bold hover:underline">
-            View All Assets
-          </button>
-        </div>
-
-        {/* The Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <ProductCard
-            title="Premium Framer Portfolio Template"
-            price="$49"
-            category="Web Dev"
-          />
-          <ProductCard
-            title="Cinematic Reel Transitions"
-            price="$29"
-            category="Video"
-          />
-          <ProductCard
-            title="AI Image Generation Masterclass"
-            price="$19"
-            category="Teaching"
-            isAffiliate={true} // This represents a supplier product
-          />
-        </div>
-      </section>
+        ))}
+      </div>
     </main>
   );
 }
